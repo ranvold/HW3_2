@@ -1,107 +1,123 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace HW3_2
 {
-    class Group
-    {
-        private Student[] groups = new Student[3];
-        public Group(Student student1, Student student2, Student student3)
-        {
-            groups[0] = student1;
-            groups[1] = student2;
-            groups[2] = student3;
-        }
-
-        public void DisplayInfo()
-        {
-            foreach (Student std in groups)
-            {
-                Console.WriteLine(std.Name);
-                std.Study();
-                std.Read();
-                std.Write();
-                std.Relax();
-                Console.WriteLine();
-            }
-        }
-    }
-
-    class Student
+    abstract class Student
     {
         private string name;
+        protected string state;
 
-        public string Name
+        public Student(string name)
         {
-            get { return name; }
-            set { name = value; }
+            this.name = name;
         }
 
-        public virtual void Study()
+        public string GetName()
         {
-            Console.WriteLine("Studies");
+            return name;
         }
-        public virtual void Read()
+        public string GetStatus()
         {
-            Console.WriteLine("Reads");
+            return state;
         }
-        public virtual void Write()
+        public void Relax()
         {
-            Console.WriteLine("Writes");
+            state += " Relax";
         }
-        public virtual void Relax()
+        public void Read()
         {
-            Console.WriteLine("Resting");
+            state += " Read";
         }
+        public void Write()
+        {
+            state += " Write";
+        }
+        abstract public void Study();
     }
 
     class GoodStudent: Student
     {
+        public GoodStudent(string name): base(name)
+        {
+            state = "Good:";
+        }
         public override void Study()
         {
-            Console.WriteLine("Studies well");
-        }
-        public override void Read()
-        {
-            Console.WriteLine("Reads well");
-        }
-        public override void Write()
-        {
-            Console.WriteLine("Writes well");
-        }
-        public override void Relax()
-        {
-            Console.WriteLine("Resting enough");
+            Read();
+            Write();
+            Read();
+            Write();
+            Relax();
         }
     }
 
     class BadStudent: Student
     {
+        public BadStudent(string name): base(name)
+        {
+            state = "Bad:";
+        }
         public override void Study()
         {
-            Console.WriteLine("Studies badly");
+            Relax();
+            Relax();
+            Relax();
+            Relax();
+            Read();
         }
-        public override void Read()
+    }
+
+    class Group
+    {
+        private string nameGroup;
+        private List<Student> students = new();
+
+        public Group(string nameGroup)
         {
-            Console.WriteLine("Reads badly");
+            this.nameGroup = nameGroup;
         }
-        public override void Write()
+        
+        public void AddStudent(Student st)
         {
-            Console.WriteLine("Writes badly");
+            students.Add(st);
         }
-        public override void Relax()
+        public void GetInfo()
         {
-            Console.WriteLine("Resting a lot");
+            Console.WriteLine(nameGroup);
+            foreach (var item in students)
+            {
+                Console.WriteLine(item.GetName());
+            }
+        }
+        public void GetFullInfo()
+        {
+            Console.WriteLine(nameGroup);
+            foreach (var item in students)
+            {
+                Console.WriteLine(item.GetName());
+                Console.WriteLine(item.GetStatus());
+            }
         }
     }
     class Program
     {
         static void Main(string[] args)
         {
-            Student Petro = new GoodStudent() { Name = "Petro Tochenko" };
-            Student Maksim = new GoodStudent() { Name = "Maksim Rybak" };
-            Student Volodymyr = new BadStudent() { Name = "Volodymyr Vlasov" };
-            Group K25 = new(Petro, Maksim, Volodymyr);
-            K25.DisplayInfo();
+            Student Petrov = new GoodStudent("Petro Petrov");
+            Student Sokolov = new BadStudent("Maksim Sokolov");
+            Student Linkov = new GoodStudent("Miron Linkov");
+
+            Group K25 = new("K25");
+
+            K25.AddStudent(Petrov);
+            K25.AddStudent(Sokolov);
+            K25.AddStudent(Linkov);
+            Petrov.Study();
+            Sokolov.Study();
+            Linkov.Study();
+
+            K25.GetFullInfo();
         }
     }
 }
